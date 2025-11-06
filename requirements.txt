@@ -1,4 +1,4 @@
 jupyter
 opencv-python
 Pillow
-tensorflow
+tensorflow==2.20.0
