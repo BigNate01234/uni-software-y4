@@ -102,6 +102,14 @@ class MainWindow(QWidget):
         self.q3_button = QPushButton("Add to Total")
         self.q3_button.clicked.connect(self.add_to_total)
 
+        # layout for quadrant 3
+        q3_layout = QVBoxLayout()
+        q3_layout.addWidget(self.q3_text)
+        q3_layout.addWidget(self.q3_button)
+
+        self.q3_widget = QWidget()
+        self.q3_widget.setLayout(q3_layout)
+
         # -------------------------
 
         self.meal_totals = {
@@ -138,6 +146,7 @@ class MainWindow(QWidget):
         layout.addWidget(self.q2, 0, 1)
         layout.addWidget(q3, 1, 0)
         layout.addWidget(q4, 1, 1)
+        layout.addWidget(self.q3_widget, 1, 0)
 
         self.setLayout(layout)
 
