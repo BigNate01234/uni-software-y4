@@ -206,6 +206,7 @@ class MainWindow(QWidget):
 
 
 if __name__ == "__main__":
+    print("C")
     app = QApplication(sys.argv)
     window = MainWindow()
     window.resize(1200, 800)
