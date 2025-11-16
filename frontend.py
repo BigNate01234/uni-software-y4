@@ -4,6 +4,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QImage, QPixmap, QFont
 from PySide6.QtCore import Qt, QTimer
 from tensorflow.keras.models import load_model
+from tensorflow.keras.applications.vgg16 import preprocess_input
+
 import numpy as np
 import sys
 import cv2
@@ -55,10 +57,22 @@ CLASS_NAMES = ["class 0", "class 1", "class 2", "class 3", "class 4", "class 5",
 
 
 def preprocess_frame(frame):
-    img = cv2.resize(frame, (224, 224))
-    img = img.astype("float32") / 255.0
+    # Convert OpenCV BGR -> RGB first
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    # Resize to model input size
+    img = cv2.resize(frame, (224, 224))  # or your model size
+
+    img = img.astype("float32")
+
+    # Apply VGG16 preprocessing (IMPORTANT!)
+    img = preprocess_input(img)
+
+    # Add batch dimension
     img = np.expand_dims(img, axis=0)
+
     return img
+
 
 
 
