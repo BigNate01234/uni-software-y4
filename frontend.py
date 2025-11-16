@@ -3,6 +3,8 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QImage, QPixmap, QFont
 from PySide6.QtCore import Qt, QTimer
+from tensorflow.keras.models import load_model
+import numpy as np
 import sys
 import cv2
 
@@ -27,6 +29,9 @@ class CameraWidget(QLabel):
         if not ret:
             return
 
+        # saving this because we're gonna be using it elsewhere
+        self.latest_frame = frame.copy()
+
         # Convert BGR (OpenCV) to RGB (Qt)
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
@@ -44,6 +49,18 @@ class CameraWidget(QLabel):
         super().closeEvent(event)
 
 
+MODEL = load_model("your_model.h5")
+
+CLASS_NAMES = ["class 0", "class 1", "class 2", "class 3", "class 4", "class 5", "class 6", "class 7", "class 8", "class 9", "class 10"]
+
+
+def preprocess_frame(frame):
+    img = cv2.resize(frame, (224, 224))
+    img = img.astype("float32") / 255.0
+    img = np.expand_dims(img, axis=0)
+    return img
+
+
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -56,8 +73,12 @@ class MainWindow(QWidget):
         # Q1 = live camera feed
         q1 = CameraWidget()
 
-        # placeholders
         q2 = QLabel("Model Output")
+        self.prediction_timer = QTimer()
+        self.prediction_timer.timeout.connect(self.run_model_prediction)
+        self.prediction_timer.start(1000) # 1s
+
+
         q3 = QLabel("Ingredient Data")
         q4 = QLabel("Meal Totals")
 
@@ -73,6 +94,21 @@ class MainWindow(QWidget):
         layout.addWidget(q4, 1, 1)
 
         self.setLayout(layout)
+
+    def run_model_prediction(self):
+        frame = self.q1.latest_frame
+        if frame is None:
+            return
+
+        img = preprocess_frame(frame)
+        preds = MODEL.predict(img, verbose=0)
+
+        class_idx = np.argmax(preds)
+        label = CLASS_NAMES[class_idx]
+        conf = preds[0][class_idx]
+
+        self.q2.setText(f"{label} ({conf*100:.1f}%)")
+
 
 
 if __name__ == "__main__":
