@@ -52,8 +52,9 @@ class CameraWidget(QLabel):
         self.cap.release()
         super().closeEvent(event)
 
-
+print("A")
 MODEL = load_model("food_classification.h5")
+print("B")
 
 CLASS_NAMES = ["Bread", "Dairy product", "Dessert", "Egg", "Fried food", "Meat", "Noodles-Pasta", "Rice", "Seafood", "Soup", "Vegetable-Fruit"]
 
