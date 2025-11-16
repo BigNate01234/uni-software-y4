@@ -135,7 +135,7 @@ class MainWindow(QWidget):
 
         q4 = QLabel("Meal Totals")
 
-        for q in [self.q1, self.q2, q3, q4]:
+        for q in [self.q1, self.q2, self.q3_text, self.q4_text]:
             q.setStyleSheet("border: 1px solid black;")
             q.setFont(QFont("Arial", 16))
             q.setAlignment(Qt.AlignCenter)
