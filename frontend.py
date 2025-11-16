@@ -88,8 +88,8 @@ class MainWindow(QWidget):
             q.setAlignment(Qt.AlignCenter)
 
         # Add widgets to grid
-        layout.addWidget(q1, 0, 0)
-        layout.addWidget(q2, 0, 1)
+        layout.addWidget(self.q1, 0, 0)
+        layout.addWidget(self.q2, 0, 1)
         layout.addWidget(q3, 1, 0)
         layout.addWidget(q4, 1, 1)
 
