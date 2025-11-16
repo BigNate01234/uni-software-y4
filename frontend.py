@@ -206,9 +206,14 @@ class MainWindow(QWidget):
 
 
 if __name__ == "__main__":
-    print("C")
+    print("A")
     app = QApplication(sys.argv)
+    print("B")
     window = MainWindow()
+    print("C")
     window.resize(1200, 800)
+    print("D")
     window.show()
+    print("E")
     sys.exit(app.exec())
+    print("F")
