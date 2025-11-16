@@ -1,9 +1,49 @@
-from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QApplication, QWidget, QLabel, QGridLayout
 )
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QImage, QPixmap, QFont
+from PySide6.QtCore import Qt, QTimer
 import sys
+import cv2
+
+class CameraWidget(QLabel):
+    def __init__(self):
+        super().__init__()
+
+        self.setText("Starting camera...")
+        self.setAlignment(Qt.AlignCenter)
+        self.setStyleSheet("border: 1px solid black;")
+
+        # Start webcam
+        self.cap = cv2.VideoCapture(0)
+
+        # Timer to grab frames
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_frame)
+        self.timer.start(30)     # ~30 FPS
+
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        if not ret:
+            return
+
+        # Convert BGR (OpenCV) to RGB (Qt)
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        # Convert to QImage
+        h, w, ch = rgb.shape
+        bytes_per_line = ch * w
+        qimg = QImage(rgb.data, w, h, bytes_per_line, QImage.Format_RGB888)
+
+        # Set QImage into QLabel
+        self.setPixmap(QPixmap.fromImage(qimg))
+
+    def closeEvent(self, event):
+        # Release camera on close
+        self.cap.release()
+        super().closeEvent(event)
+
+
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -13,8 +53,10 @@ class MainWindow(QWidget):
 
         layout = QGridLayout()
 
-        # Create 4 placeholder quadrants
-        q1 = QLabel("Camera Feed")
+        # Q1 = live camera feed
+        q1 = CameraWidget()
+
+        # placeholders
         q2 = QLabel("Model Output")
         q3 = QLabel("Ingredient Data")
         q4 = QLabel("Meal Totals")
