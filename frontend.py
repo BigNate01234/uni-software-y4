@@ -15,7 +15,7 @@ class CameraWidget(QLabel):
         self.setStyleSheet("border: 1px solid black;")
 
         # Start webcam
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
         # Timer to grab frames
         self.timer = QTimer()
