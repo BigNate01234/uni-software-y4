@@ -133,8 +133,6 @@ class MainWindow(QWidget):
         self.q3_widget.setLayout(q3_layout)
         # ----------------------
 
-        q4 = QLabel("Meal Totals")
-
         for q in [self.q1, self.q2, self.q3_text, self.q4_text]:
             q.setStyleSheet("border: 1px solid black;")
             q.setFont(QFont("Arial", 16))
@@ -143,8 +141,8 @@ class MainWindow(QWidget):
         # Add widgets to grid
         layout.addWidget(self.q1, 0, 0)
         layout.addWidget(self.q2, 0, 1)
-        layout.addWidget(q4, 1, 1)
         layout.addWidget(self.q3_widget, 1, 0)
+        layout.addWidget(self.q4_text, 1, 1)
 
         self.setLayout(layout)
 
