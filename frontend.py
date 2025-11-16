@@ -125,7 +125,6 @@ class MainWindow(QWidget):
         self.q4_text.setStyleSheet("border: 1px solid black; padding: 10px;")
 
         # -------------------------
-        q3 = QLabel("Current ingredient")
         q3_layout = QVBoxLayout()
         q3_layout.addWidget(self.q3_text)
         q3_layout.addWidget(self.q3_button)
@@ -144,7 +143,6 @@ class MainWindow(QWidget):
         # Add widgets to grid
         layout.addWidget(self.q1, 0, 0)
         layout.addWidget(self.q2, 0, 1)
-        layout.addWidget(q3, 1, 0)
         layout.addWidget(q4, 1, 1)
         layout.addWidget(self.q3_widget, 1, 0)
 
