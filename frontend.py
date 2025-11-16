@@ -1,10 +1,12 @@
 from PySide6.QtWidgets import (
-    QApplication, QWidget, QLabel, QGridLayout
+    QApplication, QWidget, QLabel, QGridLayout, QPushButton, QVBoxLayout
 )
 from PySide6.QtGui import QImage, QPixmap, QFont
 from PySide6.QtCore import Qt, QTimer
 from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.vgg16 import preprocess_input
+
+from nutrition_data import NUTRITION_DATA
 
 import numpy as np
 import sys
@@ -92,8 +94,38 @@ class MainWindow(QWidget):
         self.prediction_timer.timeout.connect(self.run_model_prediction)
         self.prediction_timer.start(1000) # 1s
 
+        # -----------------------
+        self.q3_text = QLabel("Ingredient Data")
+        self.q3_text.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        self.q3_text.setStyleSheet("border: 1px solid black; padding: 10px;")
 
-        q3 = QLabel("Ingredient Data")
+        self.q3_button = QPushButton("Add to Total")
+        self.q3_button.clicked.connect(self.add_to_total)
+
+        # -------------------------
+
+        self.meal_totals = {
+            "Calories": 0,
+            "Protein": 0,
+            "Fat": 0,
+            "Carbs": 0
+        }
+
+        self.q4_text = QLabel("Meal Totals:\nCalories: 0\nProtein: 0\nFat: 0\nCarbs: 0")
+        self.q4_text.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        self.q4_text.setStyleSheet("border: 1px solid black; padding: 10px;")
+
+        # -------------------------
+
+        q3_layout = QVBoxLayout()
+        q3_layout.addWidget(self.q3_text)
+        q3_layout.addWidget(self.q3_button)
+
+        q3_widget = QWidget()
+        q3_widget.setLayout(q3_layout)
+
+        # ----------------------
+
         q4 = QLabel("Meal Totals")
 
         for q in [self.q1, self.q2, q3, q4]:
@@ -122,6 +154,45 @@ class MainWindow(QWidget):
         conf = preds[0][class_idx]
 
         self.q2.setText(f"{label} ({conf*100:.1f}%)")
+
+        info = NUTRITION_DATA.get(label, None)
+        if info:
+            calories = info["Calories"]
+            protein = info["Protein"]
+            fat = info["Fat"]
+            carbs = info["Carbs"]
+            micros = ", ".join(info["Micronutrients"])
+
+            self.current_nutrition = info  # save for "Add to total"
+
+            self.q3_text.setText(
+                f"Ingredient: {label}\n"
+                f"Calories: {calories}\n"
+                f"Protein: {protein}\n"
+                f"Fat: {fat}\n"
+                f"Carbs: {carbs}\n"
+                f"\nMicronutrients:\n{micros}"
+            )
+    
+    def add_to_total(self):
+        if not hasattr(self, "current_nutrition"):
+            return
+
+        info = self.current_nutrition
+
+        self.meal_totals["Calories"] += info["Calories"]
+        self.meal_totals["Protein"] += info["Protein"]
+        self.meal_totals["Fat"] += info["Fat"]
+        self.meal_totals["Carbs"] += info["Carbs"]
+
+        # Update meal totals UI
+        self.q4_text.setText(
+            "Meal Totals:\n"
+            f"Calories: {self.meal_totals['Calories']}\n"
+            f"Protein: {self.meal_totals['Protein']}\n"
+            f"Fat: {self.meal_totals['Fat']}\n"
+            f"Carbs: {self.meal_totals['Carbs']}"
+        )
 
 
 
