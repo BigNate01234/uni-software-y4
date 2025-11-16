@@ -124,13 +124,6 @@ class MainWindow(QWidget):
         self.q4_text.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         self.q4_text.setStyleSheet("border: 1px solid black; padding: 10px;")
 
-        # -------------------------
-        q3_layout = QVBoxLayout()
-        q3_layout.addWidget(self.q3_text)
-        q3_layout.addWidget(self.q3_button)
-
-        self.q3_widget = QWidget()
-        self.q3_widget.setLayout(q3_layout)
         # ----------------------
 
         for q in [self.q1, self.q2, self.q3_text, self.q4_text]:
