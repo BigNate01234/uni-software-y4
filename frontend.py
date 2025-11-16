@@ -53,7 +53,7 @@ class CameraWidget(QLabel):
 
 MODEL = load_model("food_classification.h5")
 
-CLASS_NAMES = ["class 0", "class 1", "class 2", "class 3", "class 4", "class 5", "class 6", "class 7", "class 8", "class 9", "class 10"]
+CLASS_NAMES = ["Bread", "Dairy product", "Dessert", "Egg", "Fried food", "Meat", "Noodles-Pasta", "Rice", "Seafood", "Soup", "Vegetable-Fruit"]
 
 
 def preprocess_frame(frame):
