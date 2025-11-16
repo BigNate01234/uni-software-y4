@@ -129,9 +129,8 @@ class MainWindow(QWidget):
         q3_layout.addWidget(self.q3_text)
         q3_layout.addWidget(self.q3_button)
 
-        q3_widget = QWidget()
-        q3_widget.setLayout(q3_layout)
-
+        self.q3_widget = QWidget()
+        self.q3_widget.setLayout(q3_layout)
         # ----------------------
 
         q4 = QLabel("Meal Totals")
