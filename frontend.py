@@ -116,7 +116,7 @@ class MainWindow(QWidget):
         self.q4_text.setStyleSheet("border: 1px solid black; padding: 10px;")
 
         # -------------------------
-
+        q3 = QLabel("Current ingredient")
         q3_layout = QVBoxLayout()
         q3_layout.addWidget(self.q3_text)
         q3_layout.addWidget(self.q3_button)
@@ -126,9 +126,9 @@ class MainWindow(QWidget):
 
         # ----------------------
 
-        self.q4 = QLabel("Meal Totals")
+        q4 = QLabel("Meal Totals")
 
-        for q in [self.q1, self.q2, self.q3, self.q4]:
+        for q in [self.q1, self.q2, q3, q4]:
             q.setStyleSheet("border: 1px solid black;")
             q.setFont(QFont("Arial", 16))
             q.setAlignment(Qt.AlignCenter)
@@ -136,8 +136,8 @@ class MainWindow(QWidget):
         # Add widgets to grid
         layout.addWidget(self.q1, 0, 0)
         layout.addWidget(self.q2, 0, 1)
-        layout.addWidget(self.q3, 1, 0)
-        layout.addWidget(self.q4, 1, 1)
+        layout.addWidget(q3, 1, 0)
+        layout.addWidget(q4, 1, 1)
 
         self.setLayout(layout)
 
