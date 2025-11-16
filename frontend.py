@@ -49,7 +49,7 @@ class CameraWidget(QLabel):
         super().closeEvent(event)
 
 
-MODEL = load_model("your_model.h5")
+MODEL = load_model("food_classification.h5")
 
 CLASS_NAMES = ["class 0", "class 1", "class 2", "class 3", "class 4", "class 5", "class 6", "class 7", "class 8", "class 9", "class 10"]
 
