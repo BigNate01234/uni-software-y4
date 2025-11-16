@@ -71,9 +71,9 @@ class MainWindow(QWidget):
         layout = QGridLayout()
 
         # Q1 = live camera feed
-        q1 = CameraWidget()
+        self.q1 = CameraWidget()
 
-        q2 = QLabel("Model Output")
+        self.q2 = QLabel("Model Output")
         self.prediction_timer = QTimer()
         self.prediction_timer.timeout.connect(self.run_model_prediction)
         self.prediction_timer.start(1000) # 1s
