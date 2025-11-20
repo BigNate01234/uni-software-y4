@@ -144,10 +144,13 @@ class MainWindow(QWidget):
         self.time_elapsed = time.time() - self.start_time
         if int(self.time_elapsed) % 15 < 5:
             print("TIME A")
+            class_idx = 0
         elif int(self.time_elapsed) % 15 < 10:
             print("TIME B")
+            class_idx = 3
         else:
             print("TIME C")
+            class_idx = 8
         # end here
         
         label = CLASS_NAMES[class_idx]
