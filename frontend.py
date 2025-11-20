@@ -8,6 +8,7 @@ from tensorflow.keras.applications.vgg16 import preprocess_input
 
 from nutrition_data import NUTRITION_DATA
 
+import time
 import numpy as np
 import sys
 import cv2
@@ -20,60 +21,49 @@ class CameraWidget(QLabel):
         self.setAlignment(Qt.AlignCenter)
         self.setStyleSheet("border: 1px solid black;")
 
-        # Start webcam
         self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
-        # Timer to grab frames
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_frame)
-        self.timer.start(30)     # ~30 FPS
+        self.timer.start(30)
 
     def update_frame(self):
         ret, frame = self.cap.read()
         if not ret:
             return
 
-        # saving this because we're gonna be using it elsewhere
         self.latest_frame = frame.copy()
 
-        # Convert BGR (OpenCV) to RGB (Qt)
+        # convert BGR to RGB
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        # Convert to QImage
+        # convert to QImage so we can display it
         h, w, ch = rgb.shape
         bytes_per_line = ch * w
         qimg = QImage(rgb.data, w, h, bytes_per_line, QImage.Format_RGB888)
 
-        # Set QImage into QLabel
+        # set QImage into QLabel
         self.setPixmap(QPixmap.fromImage(qimg))
 
     def closeEvent(self, event):
-        # Release camera on close
+        # release camera on close
         self.cap.release()
         super().closeEvent(event)
 
-print("A")
+
 MODEL = load_model("food_classification.h5")
-print("B")
+
 
 CLASS_NAMES = ["Bread", "Dairy product", "Dessert", "Egg", "Fried food", "Meat", "Noodles-Pasta", "Rice", "Seafood", "Soup", "Vegetable-Fruit"]
 
 
 def preprocess_frame(frame):
-    # Convert OpenCV BGR -> RGB first
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-    # Resize to model input size
-    img = cv2.resize(frame, (224, 224))  # or your model size
-
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) # Convert BGR to RGB
+    img = cv2.resize(frame, (224, 224)) # Resize
     img = img.astype("float32")
 
-    # Apply VGG16 preprocessing (IMPORTANT!)
-    img = preprocess_input(img)
-
-    # Add batch dimension
+    img = preprocess_input(img) # Apply VGG16 preprocessing
     img = np.expand_dims(img, axis=0)
-
     return img
 
 
@@ -83,19 +73,22 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.start_time = time.time()
+
         self.setWindowTitle("AI Home Nutritionist - POC UI")
 
         layout = QGridLayout()
 
-        # Q1 = live camera feed
+        # Q1
         self.q1 = CameraWidget()
 
+        # Q2
         self.q2 = QLabel("Model Output")
         self.prediction_timer = QTimer()
         self.prediction_timer.timeout.connect(self.run_model_prediction)
         self.prediction_timer.start(1000) # 1s
 
-        # -----------------------
+        # Q3
         self.q3_text = QLabel("Ingredient Data")
         self.q3_text.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         self.q3_text.setStyleSheet("border: 1px solid black; padding: 10px;")
@@ -103,7 +96,7 @@ class MainWindow(QWidget):
         self.q3_button = QPushButton("Add to Total")
         self.q3_button.clicked.connect(self.add_to_total)
 
-        # layout for quadrant 3
+
         q3_layout = QVBoxLayout()
         q3_layout.addWidget(self.q3_text)
         q3_layout.addWidget(self.q3_button)
@@ -111,8 +104,7 @@ class MainWindow(QWidget):
         self.q3_widget = QWidget()
         self.q3_widget.setLayout(q3_layout)
 
-        # -------------------------
-
+        # Q4
         self.meal_totals = {
             "Calories": 0,
             "Protein": 0,
@@ -124,14 +116,13 @@ class MainWindow(QWidget):
         self.q4_text.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         self.q4_text.setStyleSheet("border: 1px solid black; padding: 10px;")
 
-        # ----------------------
-
+        # set styling for each quarter
         for q in [self.q1, self.q2, self.q3_text, self.q4_text]:
             q.setStyleSheet("border: 1px solid black;")
             q.setFont(QFont("Arial", 16))
             q.setAlignment(Qt.AlignCenter)
 
-        # Add widgets to grid
+        # put widgets on a grid
         layout.addWidget(self.q1, 0, 0)
         layout.addWidget(self.q2, 0, 1)
         layout.addWidget(self.q3_widget, 1, 0)
@@ -147,6 +138,8 @@ class MainWindow(QWidget):
         img = preprocess_frame(frame)
         preds = MODEL.predict(img, verbose=0)
 
+        print(preds) # I think here do some fuckery ...
+
         class_idx = np.argmax(preds)
         label = CLASS_NAMES[class_idx]
         conf = preds[0][class_idx]
@@ -161,7 +154,7 @@ class MainWindow(QWidget):
             carbs = info["Carbs"]
             micros = ", ".join(info["Micronutrients"])
 
-            self.current_nutrition = info  # save for "Add to total"
+            self.current_nutrition = info  # save as attribute so we can use it elsewhere
 
             self.q3_text.setText(
                 f"Ingredient: {label}\n"
@@ -183,7 +176,7 @@ class MainWindow(QWidget):
         self.meal_totals["Fat"] += info["Fat"]
         self.meal_totals["Carbs"] += info["Carbs"]
 
-        # Update meal totals UI
+        # Show in the UI
         self.q4_text.setText(
             "Meal Totals:\n"
             f"Calories: {self.meal_totals['Calories']}\n"
@@ -195,14 +188,12 @@ class MainWindow(QWidget):
 
 
 if __name__ == "__main__":
-    print("A")
     app = QApplication(sys.argv)
-    print("B")
+    print("debug 1")
     window = MainWindow()
-    print("C")
+    print("debug 2")
     window.resize(1200, 800)
-    print("D")
     window.show()
-    print("E")
+    print("debug 3")
     sys.exit(app.exec())
-    print("F")
+    
