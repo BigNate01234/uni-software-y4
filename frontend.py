@@ -140,7 +140,7 @@ class MainWindow(QWidget):
 
         class_idx = np.argmax(preds)
         label = CLASS_NAMES[class_idx]
-        print("debug: identified ->{label}")
+        print(f"debug: identified ->{label}")
 
         conf = preds[0][class_idx]
 
