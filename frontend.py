@@ -139,8 +139,21 @@ class MainWindow(QWidget):
         preds = MODEL.predict(img, verbose=0)
 
         class_idx = np.argmax(preds)
+        
+        # start here
+        self.time_elapsed = time.time() - self.start_time
+        if int(self.time_elapsed) % 15 < 5:
+            print("TIME A")
+        elif int(self.time_elapsed) % 15 < 10:
+            print("TIME B")
+        else:
+            print("TIME C")
+        # end here
+        
         label = CLASS_NAMES[class_idx]
         print(f"debug: identified ->{label}")
+        
+
 
         conf = preds[0][class_idx]
 
