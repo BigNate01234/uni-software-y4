@@ -138,10 +138,10 @@ class MainWindow(QWidget):
         img = preprocess_frame(frame)
         preds = MODEL.predict(img, verbose=0)
 
-        print(preds) # I think here do some fuckery ...
-
         class_idx = np.argmax(preds)
         label = CLASS_NAMES[class_idx]
+        print("debug: identified ->{label}")
+
         conf = preds[0][class_idx]
 
         self.q2.setText(f"{label} ({conf*100:.1f}%)")
